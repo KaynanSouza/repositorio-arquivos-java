@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Cronos • Cadastro</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"/>
+
+    <!-- Bootstrap-icons (apenas ícones) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet"/>
+
+    <!-- Estilo mínimo da página -->
+    <style>
+        html, body {height: 100%;}
+        body       {margin: 0; font-family: 'Inter', sans-serif;}
+
+        .auth-wrapper {display: grid; grid-template-columns: 1fr 1fr; height: 100%;}
+        .form-pane   {background:#fff; display:flex; flex-direction:column;
+            align-items:center; padding:2rem 3rem;}
+        .hero-pane   {background:url('/img/hero-electric.jpg') center/cover;
+            position:relative;}
+        .hero-pane::before {content:''; position:absolute; inset:0;
+            background:rgba(0,128,0,.6);}
+        .hero-text   {position:absolute; bottom:2rem; left:2rem; right:2rem; z-index:1;}
+        .hero-text h2, .hero-text h4 {color:#fff; font-weight:700;}
+        .hero-text .sub {color:#00ff7b;}
+
+        .input-icon {position:absolute; right:.75rem; top:50%; transform:translateY(-50%);
+            color:#198754;}
+        .input-with-icon {position:relative;}
+
+        .btn-outline-green {border:1px solid #198754; color:#198754;}
+        .btn-outline-green:hover {background:#198754; color:#fff;}
+
+        [class ^= col] {
+            border: 1px solid rgb(39, 28, 44)
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-fluid">
+
+    <div class="row">
+        <!-- ──────────────── COLUNA ESQUERDA – FORM ──────────────── -->
+        <div class="col-md-5 text-center">
+
+            <!-- logotipo pequeno -->
+            <img src="images/cronos-logo.png" alt="Cronos logo" class="mb-3" style="width:250px"/>
+            <h5 class="fw-bold mb-3">Sign in and start today!</h5>
+
+            <!-- ★★★ FORMULÁRIO COM th:object ★★★ -->
+            <form th:action="@{/users/save}"
+                  th:object="${user}"
+                  method="post"
+                  class="w-100 needs-validation p-5" novalidate>
+
+                <!-- banner de ERROS GLOBAIS (e-mail duplicado, etc.) -->
+                <div th:if="${#fields.hasGlobalErrors()}"
+                     class="alert alert-danger d-flex align-items-center form-alert mb-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:each="err : ${#fields.globalErrors()}"
+                          th:text="${err}">Erro</span>
+                </div>
+
+                <!-- ─── Nome ─── -->
+                <div class="mb-3 input-with-icon">
+                    <input th:field="*{name}" type="text" class="form-control"
+                           placeholder="Alex Souza" required/>
+                    <i class="bi bi-person-fill input-icon"></i>
+                    <div class="invalid-feedback"
+                         th:if="${#fields.hasErrors('name')}"
+                         th:errors="*{name}">Nome inválido</div>
+                </div>
+
+                <!-- ─── Email ─── -->
+                <div class="mb-3 input-with-icon">
+                    <input th:field="*{email}" type="email" class="form-control"
+                           placeholder="alex@email.com" required/>
+                    <i class="bi bi-envelope-fill input-icon"></i>
+                    <div class="invalid-feedback"
+                         th:if="${#fields.hasErrors('email')}"
+                         th:errors="*{email}">E-mail inválido</div>
+                </div>
+
+                <!-- ─── Senha ─── -->
+                <div class="mb-4 input-with-icon">
+                    <input th:field="*{password}" type="password" class="form-control"
+                           placeholder="Crie uma senha" required/>
+                    <i class="bi bi-lock-fill input-icon"></i>
+                    <div class="invalid-feedback"
+                         th:if="${#fields.hasErrors('password')}"
+                         th:errors="*{password}">Senha inválida</div>
+                </div>
+
+                <button type="submit" class="btn btn-outline-green w-100">
+                    Cadastrar
+                </button>
+            </form>
+        </div>
+
+        <!-- ──────────────── COLUNA DIREITA – IMAGEM ──────────────── -->
+        <div class="col-md-7">
+            <div class="">
+                <img src="images/image.png" alt="" style="size: 1000px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS opcional (validação) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    (() => {
+        const form   = document.getElementById('userForm');
+        const gError = document.getElementById('globalError');
+
+        form.addEventListener('submit', async ev => {
+            ev.preventDefault();
+            if (!form.checkValidity()) { form.classList.add('was-validated'); return; }
+
+            const payload = {
+                name:     form.name.value.trim(),
+                email:    form.email.value.trim(),
+                password: form.password.value
+            };
+
+            const resp = await fetch('/users/save', {        // URL mapeada no controller
+                method : 'POST',
+                headers: {'Content-Type':'application/json'},
+                body   : JSON.stringify(payload)
+            });
+
+            if (resp.status === 201) {
+                alert('Usuário criado!'); form.reset(); return;
+            }
+
+            const errs = await resp.json();                  // {campo:msg} ou {global:msg}
+            if (errs.global) {
+                gError.textContent = errs.global;
+                gError.classList.remove('d-none');
+            }
+            ['name','email','password'].forEach(f => {
+                document.getElementById(f + 'Error').textContent = errs[f] || '';
+            });
+        });
+    })();
+</script>
+</body>
+</html>

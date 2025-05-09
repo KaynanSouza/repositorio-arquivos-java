@@ -5,6 +5,7 @@ import br.com.rocket.testefreshdesk.modules.user.db.UserDAO;
 import br.com.rocket.testefreshdesk.modules.user.db.UserDatabase;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,9 +22,8 @@ public class UserService implements UserDAO {
     }
 
     @Override
-    public void createUser(UserEntity user) {
+    public void createUser( UserEntity user) {
 
-        // 1️⃣ Hash da senha — nunca grave texto puro
         String hashed = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
         final String sql = """

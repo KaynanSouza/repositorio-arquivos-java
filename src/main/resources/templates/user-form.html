@@ -14,8 +14,21 @@
 
 <h2>Usuário</h2>
 
-<form th:action="@{/users/save}" th:object="${user}"
-      method="post" class="mt-3 needs-validation" novalidate>
+<form th:action="@{/users/save}"
+      th:object="${user}"
+      method="post"
+      class="w-100">
+
+    <!-- banner vermelho de erros globais ----------------------------- -->
+    <div th:if="${#fields.hasGlobalErrors()}"
+         class="alert alert-danger d-flex align-items-center form-alert mb-3"
+         role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+        <!-- mostra todas as mensagens globais (ex.: e-mail duplicado) -->
+        <span th:each="err : ${#fields.globalErrors()}"
+              th:text="${err}">Erro</span>
+    </div>
 
     <div class="mb-3">
         <label for="name" class="form-label">Nome</label>

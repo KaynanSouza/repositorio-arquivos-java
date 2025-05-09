@@ -1,0 +1,20 @@
+html, body {height: 100%;}
+body       {margin: 0; font-family: 'Inter', sans-serif;}
+
+.auth-wrapper {display: grid; grid-template-columns: 1fr 1fr; height: 100%;}
+.form-pane   {background:#fff; display:flex; flex-direction:column;
+    align-items:center; padding:2rem 3rem;}
+.hero-pane   {background:url('/img/hero-electric.jpg') center/cover;
+    position:relative;}
+.hero-pane::before {content:''; position:absolute; inset:0;
+    background:rgba(0,128,0,.6);}
+.hero-text   {position:absolute; bottom:2rem; left:2rem; right:2rem; z-index:1;}
+.hero-text h2, .hero-text h4 {color:#fff; font-weight:700;}
+.hero-text .sub {color:#00ff7b;}
+
+.input-icon {position:absolute; right:.75rem; top:50%; transform:translateY(-50%);
+    color:#198754;}
+.input-with-icon {position:relative;}
+
+.btn-outline-green {border:1px solid #198754; color:#198754;}
+.btn-outline-green:hover {background:#198754; color:#fff;}
